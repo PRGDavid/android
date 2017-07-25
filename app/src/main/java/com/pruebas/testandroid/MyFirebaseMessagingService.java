@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -53,6 +55,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        Intent browserIntent = new Intent();
+        browserIntent.setAction("1");
+        PendingIntent pendingIntentBrowser = PendingIntent.getBroadcast(this, 12345, browserIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent soundIntent = new Intent();
+        soundIntent.setAction("2");
+        PendingIntent pendingIntentSound = PendingIntent.getBroadcast(this, 12345, soundIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Bitmap bitmap_image = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_stat_ic_notification);
+        NotificationCompat.BigPictureStyle s = new NotificationCompat.BigPictureStyle().bigPicture(bitmap_image);
+        s.setSummaryText(messageBody);
+
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_ic_notification)
@@ -60,7 +74,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setStyle(s)
+                .addAction(R.drawable.ic_stat_ic_notification, "Browser", pendingIntentBrowser)
+                .addAction(R.drawable.ic_stat_ic_notification, "Sound", pendingIntentSound);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
